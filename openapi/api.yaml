@@ -1,0 +1,205 @@
+openapi: 3.1.0
+info:
+  title: Karelia API Programming - OpenAPI 3.1.0 Demonstration
+  description: |-
+    This is a sample OpenAPI OAD.
+    
+    Some useful links:
+    - [Learn OpenAPI](https://learn.openapis.org)
+    - [OpenAPI Specification](https://learn.openapis.org/)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.1
+security:
+  - bearerAuth: []
+
+servers:
+  - url: http://localhost:3000
+  
+tags:
+  - name: Sample dataset
+    description: Everything you need to know about APIs
+    externalDocs:
+      description: Find out more
+      url: https://m.karelia.fi
+
+paths:
+  /data:
+    get:
+      summary: Get all users' data
+      responses:
+        200:
+          description: List all users' data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    forename:
+                      type: string
+                    surname:
+                      type: string
+                    email:
+                      type: string
+
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                forename:
+                  type: string
+                surname:
+                  type: string
+                email:
+                  type: string
+              required:
+                - id
+                - forename
+                - surname
+                - email
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  forename:
+                    type: string
+                  surname:
+                    type: string
+                  email:
+                    type: string
+        400:
+          description: Missing required fields
+        409:
+          description: Record already exists
+
+  /data/{data_id}:
+    get:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: User data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  forename:
+                    type: string
+                  surname:
+                    type: string
+                  email:
+                    type: string
+        404:
+          description: Record not found
+
+    put:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                forename:
+                  type: string
+                surname:
+                  type: string
+                email:
+                  type: string
+              required:
+                - forename
+                - surname
+                - email
+      responses:
+        200:
+          description: User updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  forename:
+                    type: string
+                  surname:
+                    type: string
+                  email:
+                    type: string
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  forename:
+                    type: string
+                  surname:
+                    type: string
+                  email:
+                    type: string
+        400:
+          description: Missing required fields
+
+    delete:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user to delete
+          schema:
+            type: string
+      responses:
+        204:
+          description: User deleted
+        404:
+          description: Record not found
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
