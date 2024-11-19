@@ -1,23 +1,28 @@
-import express from 'express'; //just one object from http import {createServer} from http;
-import index from './API/index.js'; //. means this directory
-import data from './API/data.js';
-import swaggerUi from 'swagger-ui-express'; // Changed to import
-import YAML from 'yamljs'; // Changed to import
-import cors from 'cors';
+import express from 'express';
+import {verifyToken} from './utils.js';
+import cors from "cors";
+import YAML from 'yamljs';
+import swaggerUi from 'swagger-ui-express';
+import index from './api/index.js';
+import data from './api/data.js';
+import login from './api/login.js';
 
-const app = express(); //read immidieatly from library FS import { read, readFileSync } from 'fs'
+const swaggerDocument = YAML.load('./openapi/api.yaml')
+const app = express();
 app.use(express.json());
 
-
-
-const swaggerDocument = YAML.load('./openapi/api.yaml');
-
-app.use('/', index); // use / root index
-app.use('/data', data);
-const swaggerOptions = { } // specify if needed
-app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions))
-app.use('/yaml', express.static('./openapi/api.yaml')) // requires: npm install swagger-ui-express
 app.use(cors());
 
+//var swaggerUi = require('swagger-ui-express');
+//const YAML = require('yamljs'),
+//const swaggerDocument = YAML.load('./openapi/api.yaml')
 
-export default app; 
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use('/', index);
+app.use('/data', verifyToken, data);
+app.use('/login', login);
+//const swaggerOptions = { }
+//app.use('/yaml', express.static('./openapi/api.yaml'))
+
+
+export default app;
