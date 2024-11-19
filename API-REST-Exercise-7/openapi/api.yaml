@@ -1,0 +1,248 @@
+openapi: 3.1.0
+info:
+  title: Karelia API Programming - OpenAPI 3.1.0 Demonstration
+  description: |-
+    This is a sample OpenAPI OAD.
+    
+    Some useful links:
+    - [Learn OpenAPI](https://learn.openapis.org)
+    - [OpenAPI Specification](https://learn.openapis.org/)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.1
+security:
+  - bearerAuth: []
+
+servers:
+  - url: http://localhost:3000
+  
+tags:
+  - name: Sample dataset
+    description: Everything you need to know about APIs
+    externalDocs:
+      description: Find out more
+      url: https://m.karelia.fi
+
+paths:
+  /data:
+    get:
+      summary: Get all users' data
+      responses:
+        200:
+          description: List all users' data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    Firstname:
+                      type: string
+                    Surname:
+                      type: string
+                    Email:
+                       type: string
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                Firstname:
+                  type: string
+                Surname:
+                  type: string
+                Email:
+                  type: string
+              required:
+                - id
+                - Firstname
+                - Surname
+                - Email
+      responses:
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  Firstname:
+                    type: string
+                  Surname:
+                    type: string
+                  Email:
+                    type: string
+        400:
+          description: Missing required fields
+        409:
+          description: Record already exists
+
+  /data/{data_id}:
+    get:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user
+          schema:
+            type: string
+      responses:
+        200:
+          description: User data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  Firstname:
+                    type: string
+                  Surname:
+                    type: string
+                  Email:
+                    type: string
+        404:
+          description: Record not found
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'  
+
+    put:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                Firstname:
+                  type: string
+                Surname:
+                  type: string
+                Email:
+                  type: string
+              required:
+                - Firstname
+                - Surname
+                - Email
+      responses:
+        200:
+          description: User updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  Firstname:
+                    type: string
+                  Surname:
+                    type: string
+                  Email:
+                    type: string
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        201:
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  Firstname:
+                    type: string
+                  Surname:
+                    type: string
+                  Email:
+                    type: string
+        400:
+          description: Missing required fields
+
+    delete:
+      summary: Get a specific user's data by data_id
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: The ID of the user to delete
+          schema:
+            type: string
+      responses:
+        204:
+          description: User deleted
+        404:
+          description: Record not found
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'  
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    UnauthorizedError:
+      description: Authentication failed
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Invalid token
+              message:
+                type: string
+                example: The token is invalid/expired
+    ForbiddenError:
+      description: Access forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: Access denied
+              message:
+                type: string
+                example: permission required
